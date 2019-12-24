@@ -16,11 +16,27 @@ Your program needs to plan the optimal set of instructions for the lift to trave
 
 ## Tech Stack
 
-React with Typescript
+React with Typescript - using [Create React App](https://github.com/facebook/create-react-app)
 
 ## Installation
 
+Fork or clone this repository.
+
+`$ cd frontend`
+
+`$ npm install`
+
+This should install all the dependencies.
+
 ## How To Use
+
+To run this, you need to be in the `frontend` directory.
+
+`$ cd frontend`
+
+`$ npm start`
+
+This will start the development server. When the typescript compiles, the website will open in your browser.
 
 ### Tests
 
