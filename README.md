@@ -14,6 +14,10 @@ A passenger can summon the lift to go up or down from any floor. Once in the lif
 
 Your program needs to plan the optimal set of instructions for the lift to travel, stop, and open its doors."
 
+## Design Choices
+
+* Floors will be numbered 1-10, with no ground floor.
+
 ## Tech Stack
 
 React with Typescript - using [Create React App](https://github.com/facebook/create-react-app)
@@ -43,5 +47,7 @@ This will start the development server. When the typescript compiles, the websit
 Tests use Jest.
 
 To test,
+
 `$ cd frontend`
+
 `$ npm test`
