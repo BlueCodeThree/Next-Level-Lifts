@@ -1,6 +1,9 @@
 export interface LiftModel {
-    goingUp: boolean,
+    currentlyMoving: boolean,
+    doorsOpen: boolean,
+    currentDirection: Direction,
     currentFloor: number,
+    topFloor: number,
     instructions: Instruction[]
 }
 

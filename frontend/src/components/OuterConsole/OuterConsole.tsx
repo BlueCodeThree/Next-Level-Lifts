@@ -11,7 +11,7 @@ export class OuterConsole extends React.Component<OuterConsoleProps, {}> {
 
     private callLift = (e: React.FormEvent<HTMLButtonElement>) => {
         const liftFloor = parseInt((document.getElementById("callingLiftFloor")as HTMLInputElement).value)
-        this.props.callLift({direction: e.target.id as Direction, floorPressed: liftFloor })
+        this.props.callLift({direction: (e.target as HTMLButtonElement).id as Direction, floorPressed: liftFloor })
     }
 
     public render() {
@@ -22,7 +22,7 @@ export class OuterConsole extends React.Component<OuterConsoleProps, {}> {
                     <label
                         htmlFor="callingLiftFloor"
                     >
-                        Floor Calling Lift From
+                        Floor Calling Lift From: 
                     </label>
                     <select
                         id="callingLiftFloor"
@@ -50,7 +50,10 @@ export class OuterConsole extends React.Component<OuterConsoleProps, {}> {
                 </div>
 
                 <div>
-                    <button>
+                    <button
+                        id="down"
+                        onClick={(e) => this.callLift(e)}
+                    >
                         Down
                     </button>
                 </div>
