@@ -1,5 +1,5 @@
 import React from "react";
-import { LiftModel, Instruction } from "../../models/models";
+import { LiftModel, Instruction, Direction } from "../../models/models";
 import OuterConsole from "../OuterConsole/OuterConsole";
 
 export class Lift extends React.Component<{}, LiftModel> {
@@ -19,60 +19,162 @@ export class Lift extends React.Component<{}, LiftModel> {
         this.setState({
             instructions: [...this.state.instructions, instruction]
         })
-        console.log("before lift is moving")
-        console.log(this.state);
-        await this.checkIfLiftIsMoving();
-        console.log("after lift is moving")
-        console.log(this.state);
-
-        this.checkWhichDirection()
+        if (await this.checkIfLiftIsAlreadyMoving() === false) {
+            this.checkWhichDirection()
+        };
     }
 
-    private checkIfLiftIsMoving = () => {
+    private checkIfLiftIsAlreadyMoving = (): boolean => {
         if (!this.state.currentlyMoving) {
             this.setState((state) => ({
                 currentDirection: state.instructions[0].direction,
                 currentlyMoving: true
             }));
+            return false;
         }
+        return true;
     }
 
     private checkWhichDirection = () => {
         if (this.state.currentDirection === "up") {
-            console.log("moving up")
-            this.moveLiftUp();
+            if (this.state.currentFloor > this.state.instructions[0].floorPressed) {
+                this.setState({
+                    currentDirection: "down"
+                })
+                this.moveLiftDown();
+            } else {
+                this.moveLiftUp();
+            }
         } else {
-            // this.moveLiftDown();
+            if (this.state.currentFloor < this.state.instructions[0].floorPressed) {
+                this.setState({
+                    currentDirection: "up"
+                })
+                this.moveLiftUp();
+            } else {
+                this.moveLiftDown();
+            }
         }
     }
 
     private moveLiftUp = async () => {
+        if (this.canTheLiftStopMoving() === true) {
+            console.log("lift should break out of loop and stop")
+            return
+        }
         for (let floor = this.state.currentFloor; floor <= this.state.topFloor; floor++) {
             console.log(`floor : ${floor}`)
-            this.setState({ currentFloor: floor });
-            if (this.openDoors()) {
+            await this.setState({ currentFloor: floor });
+            await this.openDoors();
+            if (this.state.doorsOpen === true) {
                 // call a function that displays innerConsole and wait for it to return with the instructions
-                console.log("doors have opened");
+                console.log("going up: doors have opened");
+                this.setState({
+                    doorsOpen: false
+                })
+            } else {
+                console.log("doors didn't open")
             }
-
+            if (this.canTheLiftStopMoving() === true) {
+                console.log("lift should break out of loop and stop")
+                return
+            }
             await new Promise(res => setTimeout(res, 5000));
+        }
+        if (this.canTheLiftStopMoving() === false) {
+            this.changeDirections(this.state.currentDirection);
         }
     }
 
+    private moveLiftDown = async () => {
+        if (this.canTheLiftStopMoving() === true) {
+            console.log("lift should break out of loop and stop")
+            return;
+        }
+        for (let floor = this.state.currentFloor; floor >= 1; floor--) {
+            console.log(`floor: ${floor}`);
+            await this.setState({ currentFloor: floor});
+            await this.openDoors();
+            if (this.state.doorsOpen === true) {
+                // call a function that displays the inner console and wait for it to return with the instructions
+                console.log("going down, doors have opened");
+                this.setState({
+                    doorsOpen: false
+                })
+            }
+            if (this.canTheLiftStopMoving() === true) {
+                console.log("lift should break out of loop and stop")
+                return;
+            }
+            await new Promise(res => setTimeout(res, 5000));
+        }
+        if (this.canTheLiftStopMoving() === false) {
+            this.changeDirections(this.state.currentDirection);
+        }
+    }
+
+    private changeDirections = (currentDirection: Direction): void => {
+        if (currentDirection === "up") {
+            this.setState({
+                currentDirection: "down"
+            })
+            console.log("lift now moving down")
+            this.moveLiftDown();
+        } else if (currentDirection === "down") {
+            this.setState({
+                currentDirection: "up"
+            })
+            console.log("lift now moving up")
+            this.moveLiftUp();
+        }
+    }
+
+    private canTheLiftStopMoving = (): boolean => {
+        if (this.state.instructions.length === 0) {
+            this.setState({
+                currentlyMoving: false
+            })
+            console.log("lift stopped moving")
+            return true;
+        }
+        return false;
+    }
+
     private openDoors = (): boolean => {
+        console.log(`instructions: `)
+        console.log(this.state.instructions)
         this.state.instructions.forEach(instruction => {
-            console.log("intstructions")
-            console.log(instruction)
             if (instruction.floorPressed === this.state.currentFloor && instruction.direction === this.state.currentDirection) {
                 this.setState({
                     doorsOpen: true
                 })
-                console.log("it got to open the doors")
-                // delete the particular instruction
+                this.isThisTheTopOrBottomFloorInTheInstructions(this.state.currentDirection);
+                this.deleteInstruction(instruction);
                 return true;
             }
         })
+        this.isThisTheTopOrBottomFloorInTheInstructions(this.state.currentDirection);
         return false;
+    }
+
+    private isThisTheTopOrBottomFloorInTheInstructions = (currentDirection: Direction): void => {
+        if (currentDirection === "up") {
+            // check to see if this is the top floor it needs to travel to
+            const topFloorToTravelTo = Math.max.apply(Math, this.state.instructions.map(instruction => instruction.floorPressed));
+            if (this.state.currentFloor === topFloorToTravelTo) {
+                this.changeDirections(currentDirection);
+            }
+        } else {
+            const minFloorToTravelTo = Math.min.apply(Math, this.state.instructions.map(instruction => instruction.floorPressed));
+            if (this.state.currentFloor === minFloorToTravelTo) {
+                this.changeDirections(currentDirection);
+            }
+        }
+    }
+
+    private deleteInstruction = (instruction: Instruction) => {
+        let deleteTheInstruction = this.state.instructions.filter(eachInstruction => eachInstruction !== instruction);
+        this.setState({ instructions: deleteTheInstruction });
     }
 
     public render() {
@@ -80,7 +182,7 @@ export class Lift extends React.Component<{}, LiftModel> {
 
         return (
             <div>
-                <p>The lift is currently on floor {currentFloor}</p>
+                <h1>The lift is currently on floor {currentFloor}</h1>
 
                 <OuterConsole callLift={this.addInstruction} />
             </div>
