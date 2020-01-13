@@ -17,3 +17,8 @@ export interface Instruction {
 export interface OuterConsoleProps {
     callLift: (callLift: Instruction) => void
 }
+
+export interface InnerConsoleProps {
+    currentFloor: number,
+    goToFloorInstructions: (goToFloorInstructions: Instruction) => void
+}

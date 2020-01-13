@@ -2,13 +2,6 @@ import React from "react";
 import { OuterConsoleProps, Direction } from "../../models/models";
 
 export class OuterConsole extends React.Component<OuterConsoleProps, {}> {
-    constructor(props: any) {
-        super(props);
-        this.state = {
-
-        }
-    }
-
     private callLift = (e: React.FormEvent<HTMLButtonElement>) => {
         const liftFloor = parseInt((document.getElementById("callingLiftFloor")as HTMLInputElement).value)
         this.props.callLift({direction: (e.target as HTMLButtonElement).id as Direction, floorPressed: liftFloor })
@@ -22,7 +15,7 @@ export class OuterConsole extends React.Component<OuterConsoleProps, {}> {
                     <label
                         htmlFor="callingLiftFloor"
                     >
-                        Floor Calling Lift From: 
+                        Floor Calling Lift From:
                     </label>
                     <select
                         id="callingLiftFloor"

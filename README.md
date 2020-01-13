@@ -42,6 +42,10 @@ To run this, you need to be in the `frontend` directory.
 
 This will start the development server. When the typescript compiles, the website will open in your browser.
 
+## Design Choices
+
+I decided to make it so that the lift goes up to every floor and then down to every floor, as a future enhancement I would make it so that the lift would stop at a floor if it didn't need to go any further up. 
+
 ### Tests
 
 Tests use Jest.

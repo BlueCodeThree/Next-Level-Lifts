@@ -1,6 +1,7 @@
 import React from "react";
 import { LiftModel, Instruction, Direction } from "../../models/models";
 import OuterConsole from "../OuterConsole/OuterConsole";
+import { InnerConsole } from "../InnerConsole/InnerConsole";
 
 export class Lift extends React.Component<{}, LiftModel> {
     constructor(props: any) {
@@ -20,6 +21,7 @@ export class Lift extends React.Component<{}, LiftModel> {
             instructions: [...this.state.instructions, instruction]
         })
         if (await this.checkIfLiftIsAlreadyMoving() === false) {
+            console.log(this.state)
             this.checkWhichDirection()
         };
     }
@@ -59,7 +61,6 @@ export class Lift extends React.Component<{}, LiftModel> {
 
     private moveLiftUp = async () => {
         if (this.canTheLiftStopMoving() === true) {
-            console.log("lift should break out of loop and stop")
             return
         }
         for (let floor = this.state.currentFloor; floor <= this.state.topFloor; floor++) {
@@ -76,10 +77,9 @@ export class Lift extends React.Component<{}, LiftModel> {
                 console.log("doors didn't open")
             }
             if (this.canTheLiftStopMoving() === true) {
-                console.log("lift should break out of loop and stop")
                 return
             }
-            await new Promise(res => setTimeout(res, 5000));
+            await new Promise(res => setTimeout(res, 3000));
         }
         if (this.canTheLiftStopMoving() === false) {
             this.changeDirections(this.state.currentDirection);
@@ -88,7 +88,6 @@ export class Lift extends React.Component<{}, LiftModel> {
 
     private moveLiftDown = async () => {
         if (this.canTheLiftStopMoving() === true) {
-            console.log("lift should break out of loop and stop")
             return;
         }
         for (let floor = this.state.currentFloor; floor >= 1; floor--) {
@@ -103,10 +102,9 @@ export class Lift extends React.Component<{}, LiftModel> {
                 })
             }
             if (this.canTheLiftStopMoving() === true) {
-                console.log("lift should break out of loop and stop")
                 return;
             }
-            await new Promise(res => setTimeout(res, 5000));
+            await new Promise(res => setTimeout(res, 3000));
         }
         if (this.canTheLiftStopMoving() === false) {
             this.changeDirections(this.state.currentDirection);
@@ -177,15 +175,26 @@ export class Lift extends React.Component<{}, LiftModel> {
         this.setState({ instructions: deleteTheInstruction });
     }
 
+    public renderDoorOpen() {
+        if (this.state.doorsOpen === true){
+            return (
+                <h2>The Lift Doors Open</h2>
+            )
+        }
+    }
+
     public render() {
         const { currentFloor } = this.state;
-
         return (
-            <div>
-                <h1>The lift is currently on floor {currentFloor}</h1>
+        <div>
+            <h1>The lift is currently on floor {currentFloor}</h1>
 
-                <OuterConsole callLift={this.addInstruction} />
-            </div>
+            {this.renderDoorOpen()}
+
+            <OuterConsole callLift={this.addInstruction} />
+
+            {/* <InnerConsole goToFloorInstructions={this.addInstruction} currentFloor={this.state.currentFloor} /> */}
+        </div>
         )
     }
 }
