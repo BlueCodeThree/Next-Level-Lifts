@@ -70,6 +70,7 @@ export class Lift extends React.Component<{}, LiftModel> {
             if (this.state.doorsOpen === true) {
                 // call a function that displays innerConsole and wait for it to return with the instructions
                 console.log("going up: doors have opened");
+                await new Promise(res => setTimeout(res, 3000));
                 this.setState({
                     doorsOpen: false
                 })
@@ -184,10 +185,12 @@ export class Lift extends React.Component<{}, LiftModel> {
     }
 
     public render() {
-        const { currentFloor } = this.state;
+        const { currentFloor, doorsOpen } = this.state;
         return (
         <div>
             <h1>The lift is currently on floor {currentFloor}</h1>
+
+            {doorsOpen && <h2>The lift doors open</h2>}
 
             {this.renderDoorOpen()}
 
