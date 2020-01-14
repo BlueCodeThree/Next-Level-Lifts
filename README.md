@@ -14,10 +14,6 @@ A passenger can summon the lift to go up or down from any floor. Once in the lif
 
 Your program needs to plan the optimal set of instructions for the lift to travel, stop, and open its doors."
 
-## Design Choices
-
-* Floors will be numbered 1-10, with no ground floor.
-
 ## Tech Stack
 
 React with Typescript - using [Create React App](https://github.com/facebook/create-react-app)
@@ -44,11 +40,18 @@ This will start the development server. When the typescript compiles, the websit
 
 ## Design Choices
 
-I decided to make it so that the lift goes up to every floor and then down to every floor, as a future enhancement I would make it so that the lift would stop at a floor if it didn't need to go any further up. 
+The idea of this lift was to have a react mostly text-based interface with some buttons. The user would be able to see the status of the lift, and call the lift from any floor at any time.
+
+When the doors of the lift opened, another react component would open displaying the console inside the lift where passengers could enter floors to go to. The console would disappear again after the user chose to close the doors, and the lift would continue to move as per it's instructions.
+
+Ultimately, I went down too many rabbit holes, and decided I needed to simplify what I was doing for this challenge, so I ended up creating another repo and compeleting the challenge in ruby:
+
+[Basic Lifts R Us](https://github.com/BlueCodeThree/basic-lifts-r-us)
 
 ### Tests
 
 Tests use Jest.
+Although, currently there are no tests...
 
 To test,
 
